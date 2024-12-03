@@ -1,39 +1,34 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import React, { useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import AdminDashboard from '../app/(tabs)/AdminDashboard';
+import ManagerDashboard from '../app/(tabs)/ManagerDashboard';
+import StaffDashboard from '../app/(tabs)/StaffDasboard';
+import Login from '../app/(tabs)/Login';
+import Signup from './(tabs)/Signup';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+const Tab = createBottomTabNavigator();
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+const LayoutScreen = () => {
 
-  if (!loaded) {
-    return null;
-  }
+
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Tab.Navigator
+      initialRouteName={'Login'}
+      screenOptions={{
+        tabBarStyle: { backgroundColor: '#fff' },
+        headerShown: false,
+      }}
+    >
+     
+          <Tab.Screen name="Login" component={Login} />
+          <Tab.Screen name="Signup" component={Signup} />
+          <Tab.Screen name="StaffDashboard" component={StaffDashboard} />
+    </Tab.Navigator>
   );
-}
+};
+
+export default LayoutScreen;
