@@ -1,13 +1,13 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import LayoutScreen from '../_layout';  // Adjust path as needed
 
+import { NavigationContainer } from '@react-navigation/native';
+import LayoutScreen from '../_layout'; 
 const App = () => {
   return (
     <NavigationContainer>
-      <LayoutScreen />
+      <LayoutScreen/>
     </NavigationContainer>
   );
 };
 
 export default App;
+

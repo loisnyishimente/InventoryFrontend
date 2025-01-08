@@ -1,33 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import AdminDashboard from '../app/(tabs)/AdminDashboard';
-import ManagerDashboard from '../app/(tabs)/ManagerDashboard';
-import StaffDashboard from '../app/(tabs)/StaffDasboard';
-import Login from '../app/(tabs)/Login';
+import { createStackNavigator } from '@react-navigation/stack';
+import Login from './(tabs)/Login';
 import Signup from './(tabs)/Signup';
-
-
-const Tab = createBottomTabNavigator();
+import AddProduct from './(tabs)/AddProduct';
+import TabNavigator from './TabNavigator';
+import SalesRecording from './(tabs)/SaleRecording';
+const Stack = createStackNavigator();
 
 const LayoutScreen = () => {
-
-
-
   return (
-    <Tab.Navigator
-      initialRouteName={'Login'}
+    <Stack.Navigator
+      initialRouteName="Login"
       screenOptions={{
-        tabBarStyle: { backgroundColor: '#fff' },
         headerShown: false,
       }}
     >
-     
-          <Tab.Screen name="Login" component={Login} />
-          <Tab.Screen name="Signup" component={Signup} />
-          <Tab.Screen name="StaffDashboard" component={StaffDashboard} />
-    </Tab.Navigator>
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Signup" component={Signup} />
+      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="AddProduct" component={AddProduct} />
+      <Stack.Screen name="SalesRecording" component={SalesRecording} />
+    </Stack.Navigator>
+    
   );
 };
 
