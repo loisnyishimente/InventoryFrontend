@@ -15,7 +15,7 @@ const Signup = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); 
   
-      const response = await fetch('http://172.16.0.107:5000/api/auth/signup', {
+      const response = await fetch('http://172.16.0.112:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

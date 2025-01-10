@@ -1,9 +1,11 @@
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from '../app/(tabs)/Dashboard';
 import { MaterialIcons } from '@expo/vector-icons';
 import Inventory from '../app/(tabs)/Inventory';
 import PurchaseHistory from './(tabs)/PurchaseHistory';
+import SalesReports from '../app/(tabs)/SaleReport';
+import Settings from '../app/(tabs)/Settings';
+
 const Tab = createBottomTabNavigator();
 
 const TabNavigator = () => {
@@ -32,7 +34,7 @@ const TabNavigator = () => {
           ),
         }}
       />
-        <Tab.Screen
+      <Tab.Screen
         name="Purchase History"
         component={PurchaseHistory}
         options={{
@@ -41,7 +43,24 @@ const TabNavigator = () => {
           ),
         }}
       />
-   
+      <Tab.Screen
+        name="Report"
+        component={SalesReports}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="assessment" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={Settings} 
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="settings" size={size} color={color} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

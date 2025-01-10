@@ -2,8 +2,6 @@
 export type RootStackParamList = {
     Login: undefined;
     Dashboard:undefined;
-    AdminDashboard: undefined;
-    ManagerDashboard: undefined;
     StaffDashboard: undefined;
     ForgotPassword: undefined;
     Signup: undefined;
@@ -11,5 +9,9 @@ export type RootStackParamList = {
     Main:undefined;
     SaleRecording:undefined;
     PurchaseHistory:undefined;
+    saleReport:undefined;
+    stockMovement:undefined;
+    ScanQRCode:undefined;
+    GenerateQRCode:undefined;
   };
  

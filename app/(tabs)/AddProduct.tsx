@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 
 const AddProductScreen: React.FC = ({ navigation }: any) => {
-  const [productName, setProductName] = useState('');
-  const [sku, setSku] = useState('');
+  const [name, setName] = useState('');
+  const [SKU, setSku] = useState('');
   const [category, setCategory] = useState('');
   const [supplier, setSupplier] = useState('');
   const [quantity, setQuantity] = useState('');
@@ -20,7 +20,7 @@ const AddProductScreen: React.FC = ({ navigation }: any) => {
   const handleAddProduct = async () => {
     console.log('handleAddProduct called');
   
-    if (!productName || !sku || !category || !supplier || !quantity || !price) {
+    if (!name || !SKU || !category || !supplier || !quantity || !price) {
       console.log('Error: Please fill all fields.');
       Alert.alert('Error', 'Please fill all fields.');
       return;
@@ -28,14 +28,14 @@ const AddProductScreen: React.FC = ({ navigation }: any) => {
   
     try {
       console.log('Sending request to add product...');
-      const response = await fetch('http://172.16.0.107:5000/api/products/add', {
+      const response = await fetch('http://172.16.0.112:5000/api/products/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: productName,
-          sku,
+          name,
+          SKU,
           category,
           supplier,
           quantity,
@@ -67,14 +67,14 @@ const AddProductScreen: React.FC = ({ navigation }: any) => {
       <TextInput
         style={styles.input}
         placeholder="Product Name"
-        value={productName}
-        onChangeText={setProductName}
+        value={name}
+        onChangeText={setName}
       />
 
       <TextInput
         style={styles.input}
         placeholder="SKU"
-        value={sku}
+        value={SKU}
         onChangeText={setSku}
       />
 

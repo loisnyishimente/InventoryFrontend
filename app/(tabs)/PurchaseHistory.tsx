@@ -18,7 +18,7 @@ const PurchaseHistoryScreen: React.FC = () => {
   const [purchaseHistory, setPurchaseHistory] = useState<PurchaseHistoryItem[]>([]);
 
   useEffect(() => {
-    // Fetch purchase history data (simulating with static data here)
+   
     const fetchedHistory: PurchaseHistoryItem[] = [
       { id: '1', customer: 'John Doe', product: 'Laptop', date: '2024-01-01', amount: '$1200' },
       { id: '2', customer: 'Jane Smith', product: 'Phone', date: '2024-01-02', amount: '$800' },
@@ -37,11 +37,11 @@ const PurchaseHistoryScreen: React.FC = () => {
   );
 
   const handleAddSale = () => {
-    navigation.navigate('SaleRecording'); // Navigate to Sales Recording screen
+    navigation.navigate('SaleRecording'); 
   };
 
   const handleDownloadPDF = async () => {
-    // Create HTML content for the PDF
+   
     const htmlContent = `
       <h1>Purchase History</h1>
       <table border="1" cellpadding="5" cellspacing="0">
@@ -65,7 +65,7 @@ const PurchaseHistoryScreen: React.FC = () => {
     try {
       const file = await RNHTMLtoPDF.convert(options);
       console.log('PDF generated at:', file.filePath);
-      // Optionally, you can open or share the PDF file here.
+    
     } catch (error) {
       console.error('Error generating PDF:', error);
     }
