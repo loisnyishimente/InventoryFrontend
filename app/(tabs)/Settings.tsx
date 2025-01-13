@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigation'; 
@@ -11,27 +11,31 @@ interface User {
 }
 
 const Settings: React.FC = () => {
-    const navigation = useNavigation<StackNavigationProp <RootStackParamList>>();
-
-
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const user: User = {
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    role: 'Admin',
+    name: 'Musimenta',
+    email: 'Musimenta@gmail.com',
+    role: 'Staff',
   };
 
-
-
-
-  const navigateToScanQRCode = () => {
-    navigation.navigate('ScanQRCode'); 
+  // Simulated camera access handler
+  const handleCameraAccess = () => {
+    const cameraAccess = false; // Simulating that camera access is denied
+    if (!cameraAccess) {
+      Alert.alert(
+        'Camera Access Denied',
+        'Unable to access your camera. Please check your device settings and grant camera permissions.',
+        [{ text: 'OK' }]
+      );
+    } else {
+      navigation.navigate('ScanQRCode'); // Proceed if access is granted
+    }
   };
 
   const navigateToGenerateQRCode = () => {
     navigation.navigate('GenerateQRCode'); 
   };
-
 
   const handleLogout = () => {
     navigation.navigate('Login'); 
@@ -39,12 +43,10 @@ const Settings: React.FC = () => {
 
   return (
     <View style={styles.container}>
-
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
       </TouchableOpacity>
 
-     
       <View style={styles.userInfo}>
         <Text style={styles.userTitle}>User Information</Text>
         <Text style={styles.userDetail}>Name: {user.name}</Text>
@@ -52,9 +54,8 @@ const Settings: React.FC = () => {
         <Text style={styles.userDetail}>Role: {user.role}</Text>
       </View>
 
-
       {/* QR/Barcode Scanner */}
-      <TouchableOpacity style={styles.button} onPress={navigateToScanQRCode}>
+      <TouchableOpacity style={styles.button} onPress={handleCameraAccess}>
         <Text style={styles.buttonText}>Scan QR/Barcode</Text>
       </TouchableOpacity>
 
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   button: {
-    backgroundColor: '#007bff',
+    backgroundColor: 'blue',
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 8,

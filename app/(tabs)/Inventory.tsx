@@ -15,15 +15,44 @@ interface Product {
   batches: { batchNo: string; expiryDate: string }[]; // batch tracking
 }
 
+const dummyData: Product[] = [
+  {
+    id: 1,
+    name: 'Smartphone',
+    stock: 3,
+    sku: 'SP123',
+    category: 'Electronics',
+    batches: [
+      { batchNo: 'B001', expiryDate: '2025-01-01' },
+      { batchNo: 'B002', expiryDate: '2025-06-01' },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Sofa Set',
+    stock: 10,
+    sku: 'SF456',
+    category: 'Furniture',
+    batches: [{ batchNo: 'B003', expiryDate: '2025-12-01' }],
+  },
+  {
+    id: 3,
+    name: 'Jeans',
+    stock: 1,
+    sku: 'J789',
+    category: 'Clothing',
+    batches: [{ batchNo: 'B004', expiryDate: '2024-12-31' }],
+  },
+];
+
 const Inventory: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [lowStockItems, setLowStockItems] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
-  const [categories, setCategories] = useState<string[]>(['All', 'Electronics', 'Furniture', 'Clothing']); // Sample categories
+  const [categories, setCategories] = useState<string[]>(['All', 'Electronics', 'Furniture', 'Clothing']);
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
- 
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -34,23 +63,24 @@ const Inventory: React.FC = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data: Product[] = await response.json();
       setProducts(data);
 
-     
       const lowStock = data.filter((product) => product.stock < 5);
       setLowStockItems(lowStock);
     } catch (error) {
       console.error('Error fetching products:', error);
+      // Use dummy data if fetch fails
+      setProducts(dummyData);
+
+      const lowStock = dummyData.filter((product) => product.stock < 5);
+      setLowStockItems(lowStock);
     }
   };
 
   const handleDelete = async (id: number) => {
     try {
-      await fetch(`http://172.16.0.112:5000/api/products/${id}`, {
-        method: 'DELETE',
-      });
+      await fetch(`http://172.16.0.112:5000/api/products/${id}`, { method: 'DELETE' });
       Alert.alert('Success', 'Product deleted successfully');
       fetchProducts();
     } catch (error) {
@@ -111,7 +141,6 @@ const Inventory: React.FC = () => {
 
   return (
     <View style={styles.container}>
-  
       {lowStockItems.length > 0 && (
         <View style={styles.alertContainer}>
           <Text style={styles.alertTitle}>Low Stock Alerts:</Text>
@@ -122,7 +151,6 @@ const Inventory: React.FC = () => {
           ))}
         </View>
       )}
-
 
       <TouchableOpacity onPress={handleAddProduct} style={styles.addButton}>
         <Text style={styles.addButtonText}>Add Product</Text>
@@ -135,7 +163,6 @@ const Inventory: React.FC = () => {
         onChangeText={handleSearchChange}
       />
 
-      
       <View style={styles.categoryFilterContainer}>
         <Text>Filter by Category:</Text>
         <Picker
@@ -168,102 +195,22 @@ const Inventory: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: '#fff',
-    },
-    alertContainer: {
-      backgroundColor: '#ffcccc',
-      padding: 10,
-      marginBottom: 16,
-      borderRadius: 8,
-      maxHeight: 150, // Limit the size of the alert container to prevent overflow
-      overflow: 'scroll', // Allow scrolling if the content overflows
-    },
-    alertTitle: {
-      fontWeight: 'bold',
-      color: 'red',
-      marginBottom: 5, // Adds space between title and text
-    },
-    alertText: {
-      color: 'red',
-      fontSize: 14, // Smaller font size for alerts
-    },
-    addButton: {
-      backgroundColor: 'green',
-      paddingVertical: 12,
-      paddingHorizontal: 20,
-      borderRadius: 5,
-      alignSelf: 'flex-start',
-      marginBottom: 16,
-    },
-    addButtonText: {
-      color: 'white',
-      fontWeight: 'bold',
-    },
-    searchInput: {
-      height: 40,
-      borderColor: '#ccc',
-      borderWidth: 1,
-      borderRadius: 5,
-      paddingLeft: 10,
-      marginBottom: 16,
-    },
-    categoryFilterContainer: {
-      marginBottom: 16,
-      alignItems: 'center',
-    },
-    picker: {
-      height: 40,
-      width: '100%',
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
-    },
-    productRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 10,
-      borderBottomWidth: 1,
-      borderColor: '#ccc',
-      flexWrap: 'wrap', 
-      width: '100%', 
-    },
-    productText: {
-      fontSize: 14, 
-      flex: 1,
-      textAlign: 'center', 
-      marginRight: 10, 
-    },
-    actionButtons: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-    },
-    deleteButton: {
-      marginLeft: 16,
-    },
-    updateButton: {
-      marginLeft: 16,
-    },
-    viewMovementButton: {
-      marginLeft: 16,
-    },
-    headerRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      padding: 10,
-      borderBottomWidth: 1,
-      borderColor: '#ccc',
-      backgroundColor: '#f4f4f4',
-      marginBottom: 10, 
-    },
-    headerText: {
-      fontWeight: 'bold',
-      flex: 1,
-      textAlign: 'center', 
-      fontSize: 14,
-    },
-  });
-  export default Inventory;
+  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
+  alertContainer: { backgroundColor: '#ffcccc', padding: 10, marginBottom: 16, borderRadius: 8 },
+  alertTitle: { fontWeight: 'bold', color: 'red', marginBottom: 5 },
+  alertText: { color: 'red', fontSize: 14 },
+  addButton: { backgroundColor: 'blue', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 5, alignSelf: 'flex-start', marginBottom: 16 },
+  addButtonText: { color: 'white', fontWeight: 'bold' },
+  searchInput: { height: 40, borderColor: '#ccc', borderWidth: 1, borderRadius: 5, paddingLeft: 10, marginBottom: 16 },
+  categoryFilterContainer: { marginBottom: 16 },
+  picker: { height: 40, width: '100%', borderWidth: 1, borderColor: '#ccc', borderRadius: 5 },
+  productRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderColor: '#ccc' },
+  actionButtons: { flexDirection: 'row', alignItems: 'center' },
+  deleteButton: { marginLeft: 16 },
+  updateButton: { marginLeft: 16 },
+  viewMovementButton: { marginLeft: 16 },
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', padding: 10, borderBottomWidth: 1, borderColor: '#ccc', backgroundColor: '#f4f4f4' },
+  headerText: { fontWeight: 'bold', flex: 1, textAlign: 'center', fontSize: 14 },
+});
+
+export default Inventory;

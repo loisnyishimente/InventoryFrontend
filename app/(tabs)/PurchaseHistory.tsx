@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Button } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -14,11 +14,10 @@ interface PurchaseHistoryItem {
 }
 
 const PurchaseHistoryScreen: React.FC = () => {
-    const navigation = useNavigation<StackNavigationProp <RootStackParamList>>();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [purchaseHistory, setPurchaseHistory] = useState<PurchaseHistoryItem[]>([]);
 
   useEffect(() => {
-   
     const fetchedHistory: PurchaseHistoryItem[] = [
       { id: '1', customer: 'John Doe', product: 'Laptop', date: '2024-01-01', amount: '$1200' },
       { id: '2', customer: 'Jane Smith', product: 'Phone', date: '2024-01-02', amount: '$800' },
@@ -41,7 +40,6 @@ const PurchaseHistoryScreen: React.FC = () => {
   };
 
   const handleDownloadPDF = async () => {
-   
     const htmlContent = `
       <h1>Purchase History</h1>
       <table border="1" cellpadding="5" cellspacing="0">
@@ -65,7 +63,6 @@ const PurchaseHistoryScreen: React.FC = () => {
     try {
       const file = await RNHTMLtoPDF.convert(options);
       console.log('PDF generated at:', file.filePath);
-    
     } catch (error) {
       console.error('Error generating PDF:', error);
     }
@@ -82,13 +79,13 @@ const PurchaseHistoryScreen: React.FC = () => {
         style={styles.list}
       />
 
-      <View style={styles.buttonContainer}>
-        <Button title="Add Sale" onPress={handleAddSale} />
-      </View>
+      <TouchableOpacity style={styles.button} onPress={handleAddSale}>
+        <Text style={styles.buttonText}>Add Sale</Text>
+      </TouchableOpacity>
 
-      <View style={styles.buttonContainer}>
-        <Button title="Download PDF" onPress={handleDownloadPDF} />
-      </View>
+      <TouchableOpacity style={styles.button} onPress={handleDownloadPDF}>
+        <Text style={styles.buttonText}>Download PDF</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -112,7 +109,6 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 5,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -122,8 +118,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#555',
   },
-  buttonContainer: {
-    marginBottom: 20,
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginBottom: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

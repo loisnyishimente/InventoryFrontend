@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { Picker } from '@react-native-picker/picker'; // Corrected import
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 
-// Type definitions for sales and stock movement data
 interface SalesData {
   product: string;
   sales: number;
@@ -17,13 +16,11 @@ interface StockMovementData {
 }
 
 const SalesStockReports: React.FC = () => {
-  const [reportType, setReportType] = useState<string>('sales'); // Default to sales report
-  const [salesData, setSalesData] = useState<SalesData[] | null>(null); // Sales data state
-  const [stockMovementData, setStockMovementData] = useState<StockMovementData[] | null>(null); // Stock movement data state
+  const [reportType, setReportType] = useState<string>('sales');
+  const [salesData, setSalesData] = useState<SalesData[] | null>(null);
+  const [stockMovementData, setStockMovementData] = useState<StockMovementData[] | null>(null);
 
-  // Function to fetch sales data based on selected time period
   const fetchSalesData = (period: string): void => {
-    // Simulating fetching sales data
     const data: Record<string, SalesData[]> = {
       daily: [
         { product: 'Laptop', sales: 30, total: '$24,000' },
@@ -42,9 +39,7 @@ const SalesStockReports: React.FC = () => {
     setSalesData(data[period]);
   };
 
-  // Function to fetch stock movement data based on selected time period
   const fetchStockMovementData = (period: string): void => {
-    // Simulating fetching stock movement data
     const data: Record<string, StockMovementData[]> = {
       daily: [
         { product: 'Laptop', inFlow: 20, outFlow: 10, total: '10' },
@@ -63,7 +58,6 @@ const SalesStockReports: React.FC = () => {
     setStockMovementData(data[period]);
   };
 
-  // Fetch data based on selected report type and time period
   const fetchData = (period: string): void => {
     if (reportType === 'sales') {
       fetchSalesData(period);
@@ -73,14 +67,13 @@ const SalesStockReports: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData('daily'); // Default fetch for daily report
+    fetchData('daily');
   }, [reportType]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sales & Stock Movement Reports</Text>
 
-      {/* Picker to select between Sales and Stock Movement Report */}
       <Picker
         selectedValue={reportType}
         onValueChange={(itemValue) => setReportType(itemValue)}
@@ -90,7 +83,6 @@ const SalesStockReports: React.FC = () => {
         <Picker.Item label="Stock Movement Report" value="stockMovement" />
       </Picker>
 
-      {/* Display data for either Sales or Stock Movement based on selected report type */}
       {reportType === 'sales' ? (
         <View style={styles.dataContainer}>
           {salesData ? (
@@ -122,9 +114,8 @@ const SalesStockReports: React.FC = () => {
         </View>
       )}
 
-      
       <Picker
-        selectedValue="daily" 
+        selectedValue="daily"
         onValueChange={(itemValue) => fetchData(itemValue)}
         style={styles.picker}
       >
@@ -133,14 +124,14 @@ const SalesStockReports: React.FC = () => {
         <Picker.Item label="Monthly" value="monthly" />
       </Picker>
 
-   
-      <Button title="Refresh Report" onPress={() => fetchData('daily')} />
-
-     
-      <Button
-        title={`Switch to ${reportType === 'sales' ? 'Stock Movement' : 'Sales'} Report`}
+      <TouchableOpacity
+        style={styles.button}
         onPress={() => setReportType(reportType === 'sales' ? 'stockMovement' : 'sales')}
-      />
+      >
+        <Text style={styles.buttonText}>
+          Switch to {reportType === 'sales' ? 'Stock Movement' : 'Sales'} Report
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -174,6 +165,18 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  button: {
+    backgroundColor: 'blue',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 

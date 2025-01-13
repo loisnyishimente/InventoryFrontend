@@ -4,7 +4,7 @@ import Login from './(tabs)/Login';
 import Signup from './(tabs)/Signup';
 import AddProduct from './(tabs)/AddProduct';
 import TabNavigator from './TabNavigator';
-import SalesRecording from './(tabs)/SaleRecording';
+import SaleRecording from './(tabs)/SaleRecording';
 const Stack = createStackNavigator();
 
 const LayoutScreen = () => {
@@ -19,7 +19,8 @@ const LayoutScreen = () => {
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="Main" component={TabNavigator} />
       <Stack.Screen name="AddProduct" component={AddProduct} />
-      <Stack.Screen name="SalesRecording" component={SalesRecording} />
+      <Stack.Screen name="SaleRecording" component={SaleRecording} />
+  
     </Stack.Navigator>
     
   );

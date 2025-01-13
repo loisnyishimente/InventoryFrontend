@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-
+import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 
 interface SaleFormState {
   customerName: string;
@@ -9,7 +8,7 @@ interface SaleFormState {
   price: string;
 }
 
-const SalesRecording: React.FC = () => {
+const SaleRecording: React.FC = () => {
   const [formData, setFormData] = useState<SaleFormState>({
     customerName: '',
     product: '',
@@ -21,17 +20,39 @@ const SalesRecording: React.FC = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSaveSale = () => {
+  const handleSaveSale = async () => {
+    try {
+      const response = await fetch('http:///172.16.0.111:5000/api/sales/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
   
-    console.log('Sale recorded:', formData);
+      if (!response.ok) {
+        const error = await response.text(); 
+        console.error('Server error:', error);
+        throw new Error('Failed to record the sale.');
+      }
   
-    setFormData({
-      customerName: '',
-      product: '',
-      quantity: '',
-      price: '',
-    });
+      const result = await response.json();
+      Alert.alert('Success', 'Sale recorded successfully!');
+      console.log('Sale recorded:', result);
+  
+      setFormData({
+        customerName: '',
+        product: '',
+        quantity: '',
+        price: '',
+      });
+    } catch (error) {
+      console.log(error)
+      console.error('Error recording sale:', error);
+      Alert.alert('Error', 'Could not connect to the server or invalid response.');
+    }
   };
+  
 
   return (
     <View style={styles.container}>
@@ -90,4 +111,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SalesRecording;
+export default SaleRecording;

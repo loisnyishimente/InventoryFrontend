@@ -15,7 +15,7 @@ const Signup = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); 
   
-      const response = await fetch('http://172.16.0.112:5000/api/auth/signup', {
+      const response = await fetch('http://172.16.0.110:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: 'blue',
     paddingVertical: 15,
     borderRadius: 5,
     alignItems: 'center',
