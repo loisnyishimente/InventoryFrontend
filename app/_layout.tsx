@@ -17,10 +17,10 @@ const LayoutScreen = () => {
     >
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} />
-      <Stack.Screen name="Main" component={TabNavigator} />
+      <Stack.Screen name="Dashboard" component={TabNavigator} />
       <Stack.Screen name="AddProduct" component={AddProduct} />
       <Stack.Screen name="SaleRecording" component={SaleRecording} />
-  
+     
     </Stack.Navigator>
     
   );

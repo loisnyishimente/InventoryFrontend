@@ -3,41 +3,41 @@ import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigation';
+import { login } from "../api/auth";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('');  // New state for role
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const handleLogin = async () => {
     try {
-      const response = await fetch('http://172.16.0.103:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Login failed with status: ${response.status}`);
+      const response = await login(email, password);
+      console.log('Login Response:', response); // Log the response from the API
+      
+      const { token, role: fetchedRole } = response;
+      
+      if (!token) {
+        throw new Error('No token returned');
       }
-      const data = await response.json();
-      const { token, role } = data;
-
-      if (token && role) {
-        Alert.alert('Success', 'Login successful!');
-        navigation.navigate('Main');
-      } else {
-        Alert.alert('Error', 'Invalid response from server. Token or role missing.');
-      }
+  
+      await AsyncStorage.setItem('authorization', token);    // Save the token
+      await AsyncStorage.setItem('userRole', fetchedRole || role); 
+      console.log(token, role); // Save the role
+  
+      Alert.alert("Success", "Login Successful");
+      navigation.navigate("Dashboard"); // Navigate to the main screen after login
+  
     } catch (error) {
-      console.log(error);
-      Alert.alert('Error', 'Login failed. Please try again.');
+      console.error('Login Error:', error); // Log the error for debugging
+      Alert.alert("Error", "Invalid credentials");
     }
   };
+  
 
-  return (
+  return (  
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
       <TextInput
@@ -46,7 +46,7 @@ const Login = () => {
         onChangeText={setEmail}
         style={styles.input}
         keyboardType="email-address"
-        autoCapitalize="none"
+      
         autoComplete="email"
       />
       <TextInput
@@ -55,7 +55,7 @@ const Login = () => {
         onChangeText={setPassword}
         secureTextEntry
         style={styles.input}
-        autoCapitalize="none"
+       
       />
       <TouchableOpacity onPress={handleLogin} style={styles.button}>
         <Text style={styles.buttonText}>Login</Text>

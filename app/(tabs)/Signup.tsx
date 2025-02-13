@@ -1,47 +1,34 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/navigation';
+import { signup } from "../api/auth";
 
 const Signup = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState(''); 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");  // New state for role
+  const [modalVisible, setModalVisible] = useState(false);  // Modal visibility state
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const handleSignup = async () => {
+    if (!role) {
+      Alert.alert("Error", "Please select a role.");
+      return;
+    }
+  
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); 
-  
-      const response = await fetch('http://172.16.0.103:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password, role }),
-        signal: controller.signal,
-      });
-  
-      clearTimeout(timeoutId); 
-  
-      const textResponse = await response.text();
-      console.log('Response Text:', textResponse);
-  
-      if (!response.ok) {
-        Alert.alert('Error', 'Signup failed: ' + textResponse || 'Unknown error');
-        return;
+      const response = await signup({ name, email, password, role });
+      if (response.message === "User registered successfully") { 
+        Alert.alert("Success", "Account created!");
+        navigation.navigate("Login");
+      } else {
+        Alert.alert("Error", response.message);
       }
-  
-      const data = JSON.parse(textResponse);
-      Alert.alert('Success', 'successful!');
-      navigation.navigate('Login');
     } catch (error) {
-
-      console.error('Network or parsing error:', error);
-      console.log(error)
-      Alert.alert('Error', 'Network error, please try again.');
+      Alert.alert("Error", "Signup failed. Please try again.");
     }
   };
   
@@ -49,6 +36,12 @@ const Signup = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Signup</Text>
+      <TextInput
+        placeholder="Name"
+        value={name}
+        onChangeText={setName}
+        style={styles.input}
+      />
       <TextInput
         placeholder="Email"
         value={email}
@@ -63,12 +56,37 @@ const Signup = () => {
         secureTextEntry
         style={styles.input}
       />
-      <TextInput
-        placeholder="Role"
-        value={role}
-        onChangeText={setRole}
-        style={styles.input}
-      />
+
+      {/* Role Selection */}
+      <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.input}>
+        <Text style={styles.inputText}>{role ? ` ${role}` : 'Select Role'}</Text>
+      </TouchableOpacity>
+
+      {/* Role Modal */}
+      <Modal
+        transparent={true}
+        animationType="slide"
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <TouchableOpacity onPress={() => { setRole('Admin'); setModalVisible(false); }} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>Admin</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setRole('Manager'); setModalVisible(false); }} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>Manager</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setRole('employee'); setModalVisible(false); }} style={styles.modalButton}>
+              <Text style={styles.modalButtonText}>Employee</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.modalCloseButton}>
+              <Text style={styles.modalCloseButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       <TouchableOpacity onPress={handleSignup} style={styles.button}>
         <Text style={styles.buttonText}>Signup</Text>
       </TouchableOpacity>
@@ -105,6 +123,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
     backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  inputText: {
+    fontSize: 16,
+    color: '#333',
   },
   button: {
     backgroundColor: 'blue',
@@ -131,6 +155,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#007BFF',
     fontWeight: 'bold',
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  modalButton: {
+    padding: 10,
+    marginBottom: 10,
+    backgroundColor: '#007BFF',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
+  modalCloseButton: {
+    padding: 10,
+    backgroundColor: '#ccc',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  modalCloseButtonText: {
+    color: '#333',
+    fontSize: 16,
   },
 });
 

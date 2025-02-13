@@ -1,154 +1,78 @@
-import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-  StyleSheet,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useEffect } from "react";
+import { View, TextInput, Alert, ScrollView,Button } from "react-native";
+import { addProduct, fetchCategories, fetchWarehouses } from "../api/products";
+import { StackNavigationProp } from '@react-navigation/stack';
 
-const AddProductScreen: React.FC = ({ navigation }: any) => {
-  const [name, setName] = useState('');
-  const [SKU, setSku] = useState('');
-  const [category, setCategory] = useState('');
-  const [supplier, setSupplier] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [price, setPrice] = useState('');
+type RootStackParamList = {
+  Home: undefined;
+  AddProduct: undefined;
+};
 
-  const handleAddProduct = async () => {
-    console.log('handleAddProduct called');
-  
-    if (!name || !SKU || !category || !supplier || !quantity || !price) {
-      console.log('Error: Please fill all fields.');
-      Alert.alert('Error', 'Please fill all fields.');
+type AddProductScreenNavigationProp = StackNavigationProp<RootStackParamList, 'AddProduct'>;
+
+interface AddProductScreenProps {
+  navigation: AddProductScreenNavigationProp;
+}
+
+export default function AddProductScreen({ navigation }: AddProductScreenProps) {
+  const [name, setName] = useState("");
+  const [SKU, setSKU] = useState("");
+  const [stock, setStock] = useState("");
+  const [price, setPrice] = useState("");
+  const [barcode, setBarcode] = useState("");
+  const [category, setCategory] = useState("");
+  const [warehouse, setWarehouse] = useState("");
+
+  const [categories, setCategories] = useState([]);
+  const [warehouses, setWarehouses] = useState([]);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const categoryData = await fetchCategories();
+        setCategories(categoryData);
+        const warehouseData = await fetchWarehouses();
+        setWarehouses(warehouseData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+    loadData();
+  }, []);
+
+  const handleSubmit = async () => {
+    if (!name || !SKU || !stock || !price || !category || !warehouse) {
+      Alert.alert("Error", "Please fill all fields");
       return;
     }
-  
+
     try {
-      console.log('Sending request to add product...');
-      const response = await fetch('http://172.16.0.103:5000/api/products/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          SKU,
-          category,
-          supplier,
-          quantity,
-          price,
-        }),
+      await addProduct({
+        name,
+        SKU,
+        stock: parseInt(stock),
+        price: parseFloat(price),
+        barcode,
+        category_id: Number(category), 
+        warehouse_id: Number(warehouse),
       });
-  
-      console.log('Response received:', response);
-  
-      if (response.ok) {
-        console.log('Product added successfully');
-        Alert.alert('Success', 'Product added successfully');
-        navigation.goBack();
-      } else {
-        console.log('Error: Failed to add product');
-        Alert.alert('Error', 'Failed to add product');
-      }
+      Alert.alert("Success", "Product added successfully!");
+      navigation.goBack();
     } catch (error) {
-      console.log('Error adding product:', error);
-      console.error('Error adding product:', error);
-      Alert.alert('Error', 'Something went wrong while adding the product');
+      Alert.alert("Error", "Failed to add product. Please try again.");
     }
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Add New Product</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Product Name"
-        value={name}
-        onChangeText={setName}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="SKU"
-        value={SKU}
-        onChangeText={setSku}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Category"
-        value={category}
-        onChangeText={setCategory}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Supplier"
-        value={supplier}
-        onChangeText={setSupplier}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Quantity"
-        value={quantity}
-        keyboardType="numeric"
-        onChangeText={setQuantity}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Price"
-        value={price}
-        keyboardType="numeric"
-        onChangeText={setPrice}
-      />
-
-      <TouchableOpacity onPress={handleAddProduct} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add Product</Text>
-      </TouchableOpacity>
+    <ScrollView contentContainerStyle={{ flexGrow: 1, padding: 20 }}>
+      <TextInput placeholder="Product Name" value={name} onChangeText={setName} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="SKU" value={SKU} onChangeText={setSKU} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Stock" value={stock} onChangeText={setStock} keyboardType="numeric" style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Price" value={price} onChangeText={setPrice} keyboardType="numeric" style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Barcode" value={barcode} onChangeText={setBarcode} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Category" value={category} onChangeText={setCategory} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <TextInput placeholder="Warehouse" value={warehouse} onChangeText={setWarehouse} style={{ borderBottomWidth: 1, marginBottom: 10 }} />
+      <Button title="Save Product" onPress={handleSubmit} />
     </ScrollView>
   );
-};
-
-// Styles
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    padding: 16,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-    textAlign: 'center',
-  },
-  input: {
-    height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 16,
-    backgroundColor: 'white',
-  },
-  addButton: {
-    backgroundColor: 'blue',
-    padding: 12,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  addButtonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-});
-
-export default AddProductScreen;
+}
