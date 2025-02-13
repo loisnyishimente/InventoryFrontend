@@ -28,7 +28,7 @@ const AddProductScreen: React.FC = ({ navigation }: any) => {
   
     try {
       console.log('Sending request to add product...');
-      const response = await fetch('http://172.16.0.112:5000/api/products/add', {
+      const response = await fetch('http://172.16.0.103:5000/api/products/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   addButton: {
-    backgroundColor: 'green',
+    backgroundColor: 'blue',
     padding: 12,
     borderRadius: 5,
     alignItems: 'center',

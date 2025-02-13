@@ -15,7 +15,7 @@ const Signup = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); 
   
-      const response = await fetch('http://172.16.0.110:5000/api/auth/signup', {
+      const response = await fetch('http://172.16.0.103:5000/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ const Signup = () => {
       }
   
       const data = JSON.parse(textResponse);
-      Alert.alert('Success', 'Signup successful!');
+      Alert.alert('Success', 'successful!');
       navigation.navigate('Login');
     } catch (error) {
 

@@ -70,7 +70,7 @@ const Inventory: React.FC = () => {
       setLowStockItems(lowStock);
     } catch (error) {
       console.error('Error fetching products:', error);
-      // Use dummy data if fetch fails
+     
       setProducts(dummyData);
 
       const lowStock = dummyData.filter((product) => product.stock < 5);

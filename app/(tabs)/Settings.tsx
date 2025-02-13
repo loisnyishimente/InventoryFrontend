@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../navigation/navigation'; 
+import { RootStackParamList } from '../../navigation/navigation';
 
 interface User {
   name: string;
@@ -12,16 +13,25 @@ interface User {
 
 const Settings: React.FC = () => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const [user, setUser] = useState<User | null>(null);
 
-  const user: User = {
-    name: 'Musimenta',
-    email: 'Musimenta@gmail.com',
-    role: 'Staff',
-  };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Failed to load user data', error);
+      }
+    };
 
-  // Simulated camera access handler
+    fetchUserData();
+  }, []);
+
   const handleCameraAccess = () => {
-    const cameraAccess = false; // Simulating that camera access is denied
+    const cameraAccess = false; // Simulating camera access denied
     if (!cameraAccess) {
       Alert.alert(
         'Camera Access Denied',
@@ -29,16 +39,17 @@ const Settings: React.FC = () => {
         [{ text: 'OK' }]
       );
     } else {
-      navigation.navigate('ScanQRCode'); // Proceed if access is granted
+      navigation.navigate('ScanQRCode');
     }
   };
 
   const navigateToGenerateQRCode = () => {
-    navigation.navigate('GenerateQRCode'); 
+    navigation.navigate('GenerateQRCode');
   };
 
-  const handleLogout = () => {
-    navigation.navigate('Login'); 
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem('user');
+    navigation.navigate('Login');
   };
 
   return (
@@ -49,17 +60,22 @@ const Settings: React.FC = () => {
 
       <View style={styles.userInfo}>
         <Text style={styles.userTitle}>User Information</Text>
-        <Text style={styles.userDetail}>Name: {user.name}</Text>
-        <Text style={styles.userDetail}>Email: {user.email}</Text>
-        <Text style={styles.userDetail}>Role: {user.role}</Text>
+        {user ? (
+          <>
+            <Text style={styles.userDetail}>Name: {user.name}</Text>
+            <Text style={styles.userDetail}>Email: {user.email}</Text>
+            <Text style={styles.userDetail}>Role: {user.role}</Text>
+          </>
+        ) : (
+          <Text style={styles.loadingText}>Loading user data...</Text>
+        )}
       </View>
 
-      {/* QR/Barcode Scanner */}
       <TouchableOpacity style={styles.button} onPress={handleCameraAccess}>
         <Text style={styles.buttonText}>Scan QR/Barcode</Text>
       </TouchableOpacity>
 
-      {/* QR/Barcode Generator */}
+
       <TouchableOpacity style={styles.button} onPress={navigateToGenerateQRCode}>
         <Text style={styles.buttonText}>Generate QR/Barcode</Text>
       </TouchableOpacity>
@@ -104,6 +120,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#555',
     marginBottom: 5,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#888',
   },
   button: {
     backgroundColor: 'blue',
