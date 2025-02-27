@@ -1,7 +1,7 @@
 import { InventoryItem } from '../types/InventoryItem';
 
 
-const BASE_URL = 'http://192.168.8.152:5000/api/products';
+const BASE_URL = 'http://172.16.0.114:5000/api/products';
 export const addInventory = async (newItem: {
     name: string;
     sku: string;

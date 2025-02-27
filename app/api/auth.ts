@@ -1,27 +1,32 @@
 import axios from "axios";
 
-const BASE_URL = "http://172.16.0.101:5000";
+const BASE_URL = "http://172.16.0.114:5000";
 
-// Example login function (you may need to adjust this according to your actual API)
-export const login = async (email: string, password: string): Promise<{ token: string, role: string }> => {
-    const response = await fetch(`${BASE_URL}/api/auth/signup`, {
-      method: 'POST',
+export interface LoginResponse {
+  token: string;
+  role: string;
+  message?: string;
+
+}export const login = async (email: string, password: string) => {
+  try {
+    const response = await fetch(`${BASE_URL}/api/auth/login`, {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email, password }),
     });
-  
-    if (!response.ok) {
-      throw new Error('Invalid credentials');
-    }
-  
+
     const data = await response.json();
-    return {
-      token: data.token, // Assuming the API returns a token
-      role: data.role,   // Assuming the API returns a role
-    };
-  };
+    console.log("Login API Response:", data); // Debugging
+
+    return data;
+  } catch (error) {
+    console.error("Login request failed:", error);
+    throw new Error("Network error");
+  }
+};
+
   
   
 

@@ -12,29 +12,31 @@ const Login = () => {
   const [role, setRole] = useState('');  // New state for role
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
+ 
   const handleLogin = async () => {
     try {
       const response = await login(email, password);
-      console.log('Login Response:', response); // Log the response from the API
       
-      const { token, role: fetchedRole } = response;
-      
-      if (!token) {
-        throw new Error('No token returned');
+      console.log('Login Response:', response); // Debugging the API response
+  
+      if (!response?.token) {
+        throw new Error(response?.message || 'No token returned');
       }
   
-      await AsyncStorage.setItem('authorization', token);    // Save the token
-      await AsyncStorage.setItem('userRole', fetchedRole || role); 
-      console.log(token, role); // Save the role
+      await AsyncStorage.setItem('authorization', response.token);
+      await AsyncStorage.setItem('userRole', response.role);
   
       Alert.alert("Success", "Login Successful");
-      navigation.navigate("Dashboard"); // Navigate to the main screen after login
-  
-    } catch (error) {
-      console.error('Login Error:', error); // Log the error for debugging
-      Alert.alert("Error", "Invalid credentials");
+   
+      navigation.navigate("Main");
+    } catch (error: any) {
+      console.error('Login Error:', error.message || error);
+      Alert.alert("Error", error.message || "Invalid credentials");
     }
   };
+  
+  
+    
   
 
   return (  

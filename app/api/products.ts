@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/products"; // Replace with your actual backend URL
+const BASE_URL = "http//172.16.0.114:5000/api/products"; // Replace with your actual backend URL
 
 export interface Product {
   name: string;

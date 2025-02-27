@@ -46,13 +46,7 @@ const Dashboard: React.FC<Props> = ({ navigation }) => {
         <Text style={styles.cardText}>- Monthly sales report is ready.</Text>
       </View>
 
-      {/* Placeholder for Graphs */}
-      <View style={[styles.graphContainer, styles.shadow]}>
-        <Text style={styles.graphTitle}>Sales Overview</Text>
-        <View style={styles.graphPlaceholder}>
-          <Text style={styles.graphPlaceholderText}>[Graph Placeholder]</Text>
-        </View>
-      </View>
+    
     </ScrollView>
   );
 };

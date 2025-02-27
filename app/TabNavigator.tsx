@@ -3,11 +3,11 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from '../app/(tabs)/Dashboard';
 import { MaterialIcons } from '@expo/vector-icons';
 import Inventory from '../app/(tabs)/Inventory';
-import PurchaseHistory from './(tabs)/PurchaseHistory';
+import PurchaseHistory from '../app/(tabs)/PurchaseHistory';
 import SalesReports from '../app/(tabs)/SaleReport';
 import Settings from '../app/(tabs)/Settings';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { PERMISSIONS } from '../app/types/permissions'; // assuming this contains the roles and permissions
+import { PERMISSIONS } from '../app/types/permissions'; // Ensure this file exists
 
 const Tab = createBottomTabNavigator();
 
@@ -16,10 +16,15 @@ const TabNavigator = () => {
 
   useEffect(() => {
     const fetchUserRole = async () => {
-      const storedUser = await AsyncStorage.getItem('UserRole');
-      if (storedUser) {
-        const parsedUser = JSON.parse(storedUser);
-        setUserRole(parsedUser.role);
+      try {
+        const storedUserRole = await AsyncStorage.getItem('userRole');  // Ensure correct key
+        console.log("Retrieved userRole from AsyncStorage:", storedUserRole);
+
+        if (storedUserRole) {
+          setUserRole(storedUserRole);
+        }
+      } catch (error) {
+        console.error("Error retrieving user role:", error);
       }
     };
 
@@ -27,8 +32,12 @@ const TabNavigator = () => {
   }, []);
 
   const hasAccess = (tabName: string) => {
+    console.log(`Checking access for: ${tabName}, userRole: ${userRole}`);
+
     if (userRole && userRole in PERMISSIONS) {
-      return PERMISSIONS[userRole as keyof typeof PERMISSIONS]?.includes(tabName);
+      const allowed = PERMISSIONS[userRole as keyof typeof PERMISSIONS]?.includes(tabName);
+      console.log(`Access for ${tabName}:`, allowed);
+      return allowed;
     }
     return false;
   };
@@ -99,6 +108,23 @@ const TabNavigator = () => {
           }}
         />
       )}
+
+      {/* Ensure at least one tab is always available */}
+      {!hasAccess('Dashboard') &&
+        !hasAccess('Inventory') &&
+        !hasAccess('PurchaseHistory') &&
+        !hasAccess('SalesReports') &&
+        !hasAccess('Settings') && (
+          <Tab.Screen
+            name="Dashboard"
+            component={Dashboard}
+            options={{
+              tabBarIcon: ({ color, size }) => (
+                <MaterialIcons name="dashboard" size={size} color={color} />
+              ),
+            }}
+          />
+        )}
     </Tab.Navigator>
   );
 };
